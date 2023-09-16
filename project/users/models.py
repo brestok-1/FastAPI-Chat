@@ -5,4 +5,5 @@ from project.users.database import Base
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
-    messages = relationship("Message", back_populates='user', cascade="all, delete-orphan")
+    __tablename__ = 'users'
+    messages = relationship("Message", back_populates="user")
