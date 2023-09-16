@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 chat_router = APIRouter(
-    prefix='/chat'
+    prefix=''
 )
 
 from . import models, views

@@ -1,5 +1,7 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
+
 from project.config import settings
+from project.database import get_async_session, async_session_maker
 from project.users.auth import auth_backend, fastapi_users
 from project.users.schemas import UserRead, UserCreate
 
@@ -9,6 +11,9 @@ def create_app() -> FastAPI:
 
     from project.chat import chat_router
     app.include_router(chat_router)
+
+    from project.users import user_router
+    app.include_router(user_router)
 
     app.include_router(
         fastapi_users.get_auth_router(auth_backend),
@@ -22,15 +27,4 @@ def create_app() -> FastAPI:
         tags=['auth'],
     )
 
-    @app.get('/')
-    async def root() -> dict[str, str]:
-        return {'message': 'Hello world!'}
-    current_user = fastapi_users.current_user()
-    @app.get('/protected')
-    def protected_route(user = Depends(current_user)):
-        return f'Hello, {user.username}'
-
-    @app.get('/unprotected')
-    def unprotected_route():
-        return 'Hi, anonymous!'
     return app
