@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
-from project.users.database import Base
+from project.database import Base
 
 
 class Message(Base):

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-users_router = APIRouter(
+chat_router = APIRouter(
     prefix='/chat'
 )
 
