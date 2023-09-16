@@ -1,10 +1,8 @@
-from sqlalchemy import Column, String, Integer
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy.orm import relationship
 
-from project.database import Base
+from project.users.database import Base
 
 
-class User(Base):
-    id = Column(Integer, autoincrement=True, primary_key=True)
-    username = Column(String(128), unique=True)
+class User(SQLAlchemyBaseUserTable[int], Base):
     messages = relationship("Message", back_populates='user', cascade="all, delete-orphan")

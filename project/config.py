@@ -5,7 +5,7 @@ from functools import lru_cache
 
 class BaseConfig:
     BASE_DIR: pathlib.Path = pathlib.Path(__file__).parent.parent
-    DATABASE_URL = (f'postgresql://'
+    DATABASE_URL = (f'postgresql+asyncpg://'
                     f'{os.getenv("POSTGRES_USER")}:'
                     f'{os.getenv("POSTGRES_PASSWORD")}@'
                     f'{os.getenv("POSTGRES_HOST")}:'
