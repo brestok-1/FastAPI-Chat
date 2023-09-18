@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from project.config import settings
 from project.database import get_async_session, async_session_maker
@@ -26,5 +27,7 @@ def create_app() -> FastAPI:
         prefix='/auth',
         tags=['auth'],
     )
+
+    app.mount('/static', StaticFiles(directory="static"), name="static")
 
     return app
