@@ -24,11 +24,11 @@
                             <div class="card-header"><h3 class="text-center font-weight-light my-4">Login</h3>
                             </div>
                             <div class="card-body">
-                                <form action="" method="post">
+                                <form action="" method="post" id="login-form">
                                     <div class="form-floating mb-3">
-                                        <input type="email" class="form-control" id="floatingInput"
+                                        <input type="email" class="form-control" id="floatingEmail"
                                                placeholder="name@example.com">
-                                        <label for="floatingInput">Email address</label>
+                                        <label for="floatingEmail">Email address</label>
                                     </div>
                                     <div class="form-floating">
                                         <input type="password" class="form-control" id="floatingPassword"
@@ -41,7 +41,8 @@
                                 </form>
                             </div>
                             <div class="card-footer text-center">
-                                <div class="small"><a href="{{ url_for('sign-up') }}">Don't have an account? Sign up!</a>
+                                <div class="small"><a href="{{ url_for('sign-up') }}">Don't have an account? Sign
+                                    up!</a>
                                 </div>
                             </div>
                         </div>
@@ -56,5 +57,51 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('login-form');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById('floatingEmail').value;
+            const password = document.getElementById('floatingPassword').value;
+
+            const formData = new URLSearchParams();
+            formData.append('grant_type', '');
+            formData.append('username', email);
+            formData.append('password', password);
+            formData.append('scope', '');
+            formData.append('client_id', '');
+            formData.append('client_secret', '');
+
+            fetch('/auth/jwt/login', {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData.toString()
+            })
+
+                .then(function (response) {
+                    if (response.ok) {
+                        console.log('Form data submitted successfully');
+                        window.location.href = 'http://' + window.location.host;
+                    } else if (response.status === 400) {
+                        alert("Invalid email or password");
+                        event.preventDefault()
+                    } else {
+                        console.error('Error submitting form data');
+                        alert('Something was wrong...')
+                        event.preventDefault()
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error submitting form data:', error);
+                });
+        });
+    });
+</script>
 </body>
 </html>

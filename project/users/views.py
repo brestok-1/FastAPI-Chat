@@ -14,4 +14,3 @@ async def login(request: Request):
 @user_router.get('/sign-up', name='sign-up')
 async def sign_up(request: Request):
     return template.TemplateResponse("registration.html", {'request': request})
-

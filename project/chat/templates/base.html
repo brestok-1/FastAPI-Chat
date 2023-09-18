@@ -42,19 +42,22 @@
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
+            {% if 'livechat' in request.cookies %}
+            <button class="btn btn-outline-light me-lg-2 d-flex justify-content-center"
+                    id="logout">Logout
+            </button>
+            {% else %}
             <a href="{{ url_for('sign-up') }}"
-               class="btn btn-outline-light me-lg-2 d-flex justify-content-center mb-md-0 mb-2">Sign
+               class="btn btn-outline-light me-lg-2 d-flex justify-content-center mb-md-0 mb-2" id="signup">Sign
                 Up</a>
-            <a href="{{ url_for('login') }}" class="btn btn-outline-light me-lg-2 d-flex justify-content-center">Sign
-                In</a>
-            <!-- <a href="#" class="btn btn-outline-light me-2">Sign Up</a> -->
-
+            <a href="{{ url_for('login') }}" class="btn btn-outline-light me-lg-2 d-flex justify-content-center"
+               id="signin">Sign In</a>
+            {% endif %}
         </div>
     </div>
 </nav>
 
 {% block content %}{% endblock %}
-
 <!-- Footer -->
 <footer>
     <section class="footer d-none d-md-block">
@@ -123,6 +126,44 @@
             mainElement.classList.add('active');
         }
     });
+</script>
+<script>
+    const logoutBtn = document.getElementById('logout')
+    logoutBtn.addEventListener('click', function (event) {
+        const confirmed = confirm('Are you sure you want to log out?');
+        if (!confirmed) {
+            return false;
+        }
+        fetch('/auth/jwt/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(function (response) {
+                if (response.ok) {
+                    console.log('You have been successfully logging out')
+                    const signUpBtn = document.createElement('a');
+                    signUpBtn.className = 'btn btn-outline-light me-lg-2 d-flex justify-content-center mb-md-0 mb-2'
+                    signUpBtn.id = 'signup'
+                    signUpBtn.href = "{{ url_for('sign-up') }}"
+                    signUpBtn.textContent = 'Sign Up'
+
+                    const loginBtn = document.createElement('a');
+                    loginBtn.id = 'signin'
+                    loginBtn.href = "{{ url_for('login') }}"
+                    loginBtn.className = 'btn btn-outline-light me-lg-2 d-flex justify-content-center'
+                    loginBtn.textContent = 'Sign in'
+
+                    const parentElement = logoutBtn.parentNode;
+                    parentElement.replaceChild(signUpBtn, logoutBtn);
+                    parentElement.appendChild(loginBtn);
+
+                } else {
+                    console.error('Error logging out user');
+                }
+            })
+    })
 </script>
 {% block js %}
 {% endblock %}
