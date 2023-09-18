@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid d-flex justify-content-center align-items-center bg-chat" id="main">
+    <div class="row justify-content-center times-new-roman">
+        <div class="col-12 text-center">
+            <div class="fs-1 mb-3">Welcome to LiveChat and enjoy your experience!</div>
+            <h5>To continue, click on the "Go to Chat" button or open the "Chat" tab</h5>
+        </div>
+        <div class="d-grid col-6 mx-auto mt-2">
+            <a class="btn btn-success py-2 fs-3" href="{{ url_for('chat') }}">Go to Chat</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    window.addEventListener('load', function () {
+        var headerHeight = document.querySelector('nav').offsetHeight;
+        var footerHeight = document.querySelector('footer').offsetHeight;
+        var windowHeight = window.innerHeight;
+
+        var mainHeight = windowHeight - (headerHeight + footerHeight);
+        document.getElementById('main').style.height = mainHeight + 'px';
+    });
+</script>
+{% endblock %}
