@@ -161,3 +161,7 @@ a {
     max-height: 500px;
     overflow-y: auto;
   }
+
+.times-new-roman{
+    font-family: 'Times New Roman', Times, serif;
+}
