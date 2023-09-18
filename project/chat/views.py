@@ -15,7 +15,12 @@ from ..users import current_user
 template = Jinja2Templates(directory='project/chat/templates')
 
 
-@chat_router.get('/chat')
+@chat_router.get('/', name='main')
+async def print_chat(request: Request):
+    return template.TemplateResponse("welcome.html", {'request': request})
+
+
+@chat_router.get('/chat', name='chat')
 async def print_chat(request: Request):
     return template.TemplateResponse("main.html", {'request': request})
 
@@ -36,3 +41,10 @@ async def create_message(text: str,
     session.add(message)
     await session.commit()
     return message
+
+
+@chat_router.post('/search')
+async def search_messages(text: str, session: AsyncSession = Depends(get_async_session)):
+    result = await session.execute(select(Message).where(Message.text == text))
+    messages = result.scalars().all()
+    return messages

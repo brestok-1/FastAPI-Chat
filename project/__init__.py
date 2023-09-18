@@ -11,10 +11,10 @@ def create_app() -> FastAPI:
     app = FastAPI()
 
     from project.chat import chat_router
-    app.include_router(chat_router)
+    app.include_router(chat_router, tags=['Chat'])
 
     from project.users import user_router
-    app.include_router(user_router)
+    app.include_router(user_router, tags=['Users'])
 
     app.include_router(
         fastapi_users.get_auth_router(auth_backend),
