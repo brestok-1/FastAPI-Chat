@@ -75,20 +75,19 @@ a {
 /* One project */
 
 
-
 /* Chat */
-.bg-chat{
+.bg-chat {
     background-color: #c4d4e7 !important;
 }
 
-.chat-border{
+.chat-border {
     border: 0px solid #ffffff; /* Цвет и толщина границы */
     border-radius: 20px;
     background-color: #fff;
     box-shadow: 0px 0px 15px 2px #919090;
 }
 
-.form-control{
+.form-control {
     display: block;
     width: 100%;
     padding: .375rem .75rem;
@@ -102,25 +101,25 @@ a {
     -moz-appearance: none;
     appearance: none;
     border-radius: .375rem;
-    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
 
-.bg-gray{
+.bg-gray {
     background-color: rgba(0, 0, 0, 0.1);
     border: 0px 0px solid #ffffff;
     border-end-end-radius: 20px;
     border-end-start-radius: 20px;
 }
 
-.bg-gray-welcome{
+.bg-gray-welcome {
     background-color: rgba(0, 0, 0, 0.1);
     border: 0px 0px solid #ffffff;
     border-start-end-radius: 20px;
     border-start-start-radius: 20px;
 }
 
-.welcome-message{
-    font-family:'Times New Roman', Times, serif;
+.welcome-message {
+    font-family: 'Times New Roman', Times, serif;
     font-size: 30px;
     color: #0d6efd;
 }
@@ -128,7 +127,7 @@ a {
 .card {
     border: 1px solid #ffffff;
     border-radius: 20px;
-  }
+}
 
 .card-header:first-child {
     border-top-right-radius: 20px;
@@ -136,11 +135,11 @@ a {
 }
 
 
-.card-header{
+.card-header {
     border-bottom: none;
 }
 
-.card-body{
+.card-body {
     padding: 0 var(--bs-card-spacer-x);;
 }
 
@@ -149,19 +148,70 @@ a {
     border-bottom-left-radius: 20px;
 }
 
-.keyboard{
+.keyboard {
     clear: both;
 }
 
-.bg-success{
-    background-color: #32b338!important;
+.bg-success {
+    background-color: #32b338 !important;
 }
 
 .list-messages {
-    max-height: 500px;
-    overflow-y: auto;
-  }
+    overflow-y: scroll;
+}
 
-.times-new-roman{
+.times-new-roman {
     font-family: 'Times New Roman', Times, serif;
+}
+
+.spinner {
+    animation: rotator 1.4s linear infinite;
+}
+
+@keyframes rotator {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(270deg);
+    }
+}
+
+.path {
+    stroke-dasharray: 187;
+    stroke-dashoffset: 0;
+    transform-origin: center;
+    animation: dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite;
+}
+
+@keyframes colors {
+    0% {
+        stroke: #4285F4;
+    }
+    25% {
+        stroke: #DE3E35;
+    }
+    50% {
+        stroke: #F7C223;
+    }
+    75% {
+        stroke: #1B9A59;
+    }
+    100% {
+        stroke: #4285F4;
+    }
+}
+
+@keyframes dash {
+    0% {
+        stroke-dashoffset: 187;
+    }
+    50% {
+        stroke-dashoffset: 46.75;
+        transform: rotate(135deg);
+    }
+    100% {
+        stroke-dashoffset: 187;
+        transform: rotate(450deg);
+    }
 }

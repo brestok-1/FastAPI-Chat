@@ -3,97 +3,22 @@
 <div class="bg-chat">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-11 chat-border my-5 px-0">
-                <div class="welcome-message bg-gray-welcome py-4 text-center">
-                    Welcome to LiveChat! Here you can discuss anything!
+            <div class="col-md-10 chat-border my-4 px-0">
+                <div class="welcome-message bg-gray-welcome py-4 text-center" id="chatheader">
+                    Here you can discuss anything!
                 </div>
 
-                <div class="list-messages mx-4">
-                    <ul class="list-unstyled pt-3">
-                        <li class="d-flex justify-content-between col-8 mb-3 float-start">
-                            <div class="card">
-                                <div class="card-header bg-primary d-flex justify-content-between">
-                                    <p class="fs-5 mb-0 text-white">Brad Pitt</p>
-                                    <p class="text-muted small mb-0"><span class="text-white"><i
-                                            class="far fa-clock"></i><span class="ms-1">10 mins ago</span></span></p>
-                                </div>
-                                <div class="card-body bg-primary">
-                                    <p class="mb-0 text-white pb-1">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                        incididunt ut
-                                        labore et dolore magna aliqua. lorem
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="d-flex justify-content-between col-8 mb-3 float-end">
-                            <div class="card">
-                                <div class="card-header bg-success d-flex justify-content-between">
-                                    <p class="fs-5 mb-0 text-white">Brad Pitt</p>
-                                    <p class="text-muted small mb-0"><span class="text-white"><i
-                                            class="far fa-clock"></i><span class="ms-1">10 mins ago</span></span></p>
-                                </div>
-                                <div class="card-body bg-success ">
-                                    <p class="mb-0 text-white pb-1">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                        incididunt ut
-                                        labore et dolore magna aliqua. lorem
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="d-flex justify-content-between col-8 mb-3 float-end">
-                            <div class="card">
-                                <div class="card-header bg-success d-flex justify-content-between">
-                                    <p class="fs-5 mb-0 text-white">Brad Pitt</p>
-                                    <p class="text-muted small mb-0"><span class="text-white"><i
-                                            class="far fa-clock"></i><span class="ms-1">10 mins ago</span></span></p>
-                                </div>
-                                <div class="card-body bg-success ">
-                                    <p class="mb-0 text-white pb-1">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                        incididunt ut
-                                        labore et dolore magna aliqua. lorem
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="d-flex justify-content-between col-8 mb-3 float-start">
-                            <div class="card">
-                                <div class="card-header bg-primary d-flex justify-content-between">
-                                    <p class="fs-5 mb-0 text-white">Brad Pitt</p>
-                                    <p class="text-muted small mb-0"><span class="text-white"><i
-                                            class="far fa-clock"></i><span class="ms-1">10 mins ago</span></span></p>
-                                </div>
-                                <div class="card-body bg-primary">
-                                    <p class="mb-0 text-white pb-1">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                        incididunt ut
-                                        labore et dolore magna aliqua. lorem
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="d-flex justify-content-between col-8 mb-3 float-end">
-                            <div class="card">
-                                <div class="card-header bg-success d-flex justify-content-between">
-                                    <p class="fs-5 mb-0 text-white">Brad Pitt</p>
-                                    <p class="text-muted small mb-0"><span class="text-white"><i
-                                            class="far fa-clock"></i><span class="ms-1">10 mins ago</span></span></p>
-                                </div>
-                                <div class="card-body bg-success ">
-                                    <p class="mb-0 text-white pb-1">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                                        incididunt ut
-                                        labore et dolore magna aliqua. lorem
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
+                <div class="list-messages ms-4 d-grid scroll" id="parentElement">
+                    <div class="d-flex justify-content-center align-items-center" id="loading">
+                        <svg class="spinner" width="80px" height="80px" viewBox="0 0 66 66"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33"
+                                    r="30"></circle>
+                        </svg>
+                    </div>
                 </div>
 
-                <div class="keyboard px-4 bg-gray py-3">
+                <div class="keyboard px-4 bg-gray py-3" id="keyboard">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Write a message"
                                aria-label="Recipient's username" aria-describedby="button-addon2">
@@ -104,4 +29,86 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block js %}
+<script>
+    const headerHeight = document.querySelector('nav').offsetHeight;
+    const footerHeight = document.querySelector('footer').offsetHeight;
+    const keyboardHeight = document.getElementById('keyboard').offsetHeight
+    const chatHeader = document.getElementById('chatheader').offsetHeight
+    const chatBorder = document.querySelector('.chat-border');
+    const marginTop = window.getComputedStyle(chatBorder).marginTop;
+    const marginBottom = window.getComputedStyle(chatBorder).marginBottom;
+    const marginTopPx = parseInt(marginTop, 10);
+    const marginBottomPx = parseInt(marginBottom, 10);
+    const totalMarginHeight = marginTopPx + marginBottomPx;
+    const windowHeight = window.innerHeight;
+
+    const mainHeight = windowHeight - (headerHeight + footerHeight + keyboardHeight + chatHeader + totalMarginHeight);
+    document.getElementById('parentElement').style.height = mainHeight + 'px';
+</script>
+<script>
+    fetch('/get-messages')
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else if (response.status === 401) {
+                window.location.href = 'http://' + window.location.host + '/user/login';
+            } else {
+                alert('Something was wrong...')
+            }
+        })
+        .then(data => {
+            const parentElement = document.getElementById("parentElement");
+            const ulElement = document.createElement("ul");
+            ulElement.className = "list-unstyled mt-0";
+            data.forEach(message => {
+                if (message.username !== "{{username}}") {
+                    const li = document.createElement("li");
+                    li.className = "d-flex justify-content-between col-7 mb-3 float-start";
+                    const date = new Date(message.created_at);
+                    const formattedDate = `${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+
+                    li.innerHTML = `<div class="card col-12">
+                    <div class="card-header bg-primary d-flex justify-content-between">
+                        <p class="fs-5 mb-0 text-white">${message.username}</p>
+                        <p class="text-muted small mb-0"><span class="text-white"><i class="far fa-clock"></i><span class="ms-1">${formattedDate}</span></span></p>
+                    </div>
+                    <div class="card-body bg-primary">
+                        <p class="mb-0 text-white pb-1">
+                            ${message.text}
+                        </p>
+                    </div>
+                </div>`;
+                    ulElement.appendChild(li);
+                } else {
+
+                    const li = document.createElement("li");
+                    li.className = "d-flex justify-content-between col-7 mb-3 float-end";
+                    const date = new Date(message.created_at);
+                    const formattedDate = `${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+
+                    li.innerHTML = `<div class="card col-12">
+                    <div class="card-header bg-success d-flex justify-content-between me-3">
+                        <p class="fs-5 mb-0 text-white">${message.username}</p>
+                        <p class="text-muted small mb-0"><span class="text-white"><i class="far fa-clock"></i><span class="ms-1">${formattedDate}</span></span></p>
+                    </div>
+                    <div class="card-body bg-success me-3">
+                        <p class="mb-0 text-white pb-1">
+                            ${message.text}
+                        </p>
+                    </div>
+                </div>`;
+                    ulElement.appendChild(li);
+                }
+            });
+            const loadingElement = document.getElementById("loading");
+            parentElement.removeChild(loadingElement);
+            parentElement.appendChild(ulElement);
+            parentElement.scrollTop = parentElement.scrollHeight
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+</script>
 {% endblock %}

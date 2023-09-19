@@ -7,7 +7,11 @@
             <h5>To continue, click on the "Go to Chat" button or open the "Chat" tab</h5>
         </div>
         <div class="d-grid col-6 mx-auto mt-2">
+            {% if 'livechat' in request.cookies %}
             <a class="btn btn-success py-2 fs-3" href="{{ url_for('chat') }}">Go to Chat</a>
+            {% else %}
+            <a class="btn btn-success py-2 fs-3" href="{{ url_for('login') }}">Go to Chat</a>
+            {% endif %}
         </div>
     </div>
 </div>

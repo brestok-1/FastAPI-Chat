@@ -35,7 +35,11 @@
                     <a class="nav-link" aria-current="page" href="{{ url_for('main') }}" id="welcome">Main</a>
                 </li>
                 <li class="nav-item mx-auto ps-md-2">
+                    {% if 'livechat' in request.cookies %}
                     <a class="nav-link fs-5" href="{{ url_for('chat') }}" id="chat">Chat</a>
+                    {% else %}
+                    <a class="nav-link fs-5" href="{{ url_for('login') }}" id="chat">Chat</a>
+                    {% endif %}
                 </li>
             </ul>
             <form class="d-flex me-lg-2 my-2" role="search" method="get" action="">
@@ -142,23 +146,7 @@
         })
             .then(function (response) {
                 if (response.ok) {
-                    console.log('You have been successfully logging out')
-                    const signUpBtn = document.createElement('a');
-                    signUpBtn.className = 'btn btn-outline-light me-lg-2 d-flex justify-content-center mb-md-0 mb-2'
-                    signUpBtn.id = 'signup'
-                    signUpBtn.href = "{{ url_for('sign-up') }}"
-                    signUpBtn.textContent = 'Sign Up'
-
-                    const loginBtn = document.createElement('a');
-                    loginBtn.id = 'signin'
-                    loginBtn.href = "{{ url_for('login') }}"
-                    loginBtn.className = 'btn btn-outline-light me-lg-2 d-flex justify-content-center'
-                    loginBtn.textContent = 'Sign in'
-
-                    const parentElement = logoutBtn.parentNode;
-                    parentElement.replaceChild(signUpBtn, logoutBtn);
-                    parentElement.appendChild(loginBtn);
-
+                    window.location.href = 'http://' + window.location.host;
                 } else {
                     console.error('Error logging out user');
                 }
