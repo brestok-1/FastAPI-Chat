@@ -1,4 +1,11 @@
 {% extends "base.html" %}
+{% block search %}
+<form class="d-flex me-lg-2" role="search" method="get" action="" id="search">
+    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+           id="search-text">
+    <button class="btn btn-outline-success" type="submit">Search</button>
+</form>
+{% endblock %}
 {% block content %}
 <div class="bg-chat">
     <div class="container">
@@ -19,11 +26,14 @@
                 </div>
 
                 <div class="keyboard px-4 bg-gray py-3" id="keyboard">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Write a message"
-                               aria-label="Recipient's username" aria-describedby="button-addon2">
-                        <button class="btn btn-primary" type="button" id="button-addon2">Send message</button>
-                    </div>
+                    <form action="" method="post" id="send-message">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Write a message"
+                                   aria-label="Recipient's username" aria-describedby="button-addon2"
+                                   id="input-message">
+                            <button class="btn btn-primary" type="submit" id="button-addon2">Send message</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -65,7 +75,7 @@
             data.forEach(message => {
                 if (message.username !== "{{username}}") {
                     const li = document.createElement("li");
-                    li.className = "d-flex justify-content-between col-7 mb-3 float-start";
+                    li.className = "d-flex justify-content-between col-7 my-2 float-start";
                     const date = new Date(message.created_at);
                     const formattedDate = `${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 
@@ -84,7 +94,7 @@
                 } else {
 
                     const li = document.createElement("li");
-                    li.className = "d-flex justify-content-between col-7 mb-3 float-end";
+                    li.className = "d-flex justify-content-between col-7 my-2 float-end";
                     const date = new Date(message.created_at);
                     const formattedDate = `${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 
@@ -110,5 +120,142 @@
         .catch(error => {
             console.error('Error:', error);
         });
+</script>
+<script>
+    const form = document.getElementById('send-message');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const input = document.getElementById('input-message');
+        const text = input.value;
+        const data = {text: text};
+        try {
+            const response = await fetch('/create-message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                console.log('Сообщение успешно отправлено');
+
+            } else if (response.status === 401) {
+                window.location.href = 'http://' + window.location.host + '/auth/jwt/login';
+                console.error('Ошибка при отправке сообщения')
+                event.preventDefault();
+            } else {
+                alert('Something was wrong...')
+                console.log(response)
+                event.preventDefault()
+            }
+        } catch (error) {
+            console.error('Ошибка при отправке запроса:', error);
+        }
+
+        input.value = '';
+    });
+
+</script>
+<script>
+    const myForm = document.getElementById('search');
+    myForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const input = document.getElementById('search-text');
+        const text = input.value;
+        if (text.length !== 0) {
+            const params = new URLSearchParams();
+            params.append('text', text);
+            try {
+                const response = await fetch('/search?' + params.toString(), {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                if (response.ok) {
+                    const parentElement = document.getElementById("parentElement");
+                    const messages = await response.json()
+                    parentElement.innerHTML = `
+        <div class="d-flex justify-content-center align-items-center" id="loading">
+            <svg class="spinner" width="80px" height="80px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+            </svg>
+        </div>
+    `;
+                    if (messages.length === 0) {
+                        setTimeout(() => {
+                            const loadingElement = document.getElementById('loading')
+                            loadingElement.remove()
+                            parentElement.innerHTML = `<div class="d-flex justify-content-center fs-3 align-items-center times-new-roman">Sorry, nothing was found based on your request</div>`
+                        }, 1000)
+                    } else {
+                        setTimeout(() => {
+                            const loadingElement = document.getElementById('loading')
+                            loadingElement.remove()
+                            const ulElement = document.createElement("ul");
+                            ulElement.className = "list-unstyled mt-0";
+                            messages.forEach(message => {
+                                if (message.username !== "{{username}}") {
+                                    const li = document.createElement("li");
+                                    li.className = "d-flex justify-content-between col-7 my-2 float-start";
+                                    const date = new Date(message.created_at);
+                                    const formattedDate = `${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+
+                                    li.innerHTML = `<div class="card col-12">
+                    <div class="card-header bg-primary d-flex justify-content-between">
+                        <p class="fs-5 mb-0 text-white">${message.username}</p>
+                        <p class="text-muted small mb-0"><span class="text-white"><i class="far fa-clock"></i><span class="ms-1">${formattedDate}</span></span></p>
+                    </div>
+                    <div class="card-body bg-primary">
+                        <p class="mb-0 text-white pb-1">
+                            ${message.text}
+                        </p>
+                    </div>
+                </div>`;
+                                    ulElement.appendChild(li);
+                                } else {
+
+                                    const li = document.createElement("li");
+                                    li.className = "d-flex justify-content-between col-7 my-2 float-end";
+                                    const date = new Date(message.created_at);
+                                    const formattedDate = `${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+
+                                    li.innerHTML = `<div class="card col-12">
+                    <div class="card-header bg-success d-flex justify-content-between me-3">
+                        <p class="fs-5 mb-0 text-white">${message.username}</p>
+                        <p class="text-muted small mb-0"><span class="text-white"><i class="far fa-clock"></i><span class="ms-1">${formattedDate}</span></span></p>
+                    </div>
+                    <div class="card-body bg-success me-3">
+                        <p class="mb-0 text-white pb-1">
+                            ${message.text}
+                        </p>
+                    </div>
+                </div>`;
+                                    ulElement.appendChild(li);
+                                }
+                            });
+                            parentElement.appendChild(ulElement);
+                            parentElement.scrollTop = parentElement.scrollHeight
+                        }, 1000)
+                    }
+                } else if (response.status === 401) {
+                    event.preventDefault();
+                    window.location.href = 'http://' + window.location.host + '/auth/jwt/login';
+                    console.error('Ошибка при отправке сообщения')
+                } else {
+                    alert('Something was wrong...')
+                    console.log(response)
+                    event.preventDefault()
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке запроса:', error);
+            }
+            input.value = '';
+        } else {
+            event.preventDefault()
+        }
+    });
 </script>
 {% endblock %}

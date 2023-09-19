@@ -42,12 +42,9 @@
                     {% endif %}
                 </li>
             </ul>
-            <form class="d-flex me-lg-2 my-2" role="search" method="get" action="">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
+                {% block search %}{% endblock %}
             {% if 'livechat' in request.cookies %}
-            <button class="btn btn-outline-light me-lg-2 d-flex justify-content-center"
+            <button class="btn btn-outline-light me-lg-2 my-2 d-flex justify-content-center"
                     id="logout">Logout
             </button>
             {% else %}
