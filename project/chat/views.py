@@ -16,18 +16,19 @@ template = Jinja2Templates(directory='project/chat/templates')
 
 
 @chat_router.get('/', name='main')
-async def print_chat(request: Request):
+async def main(request: Request):
     return template.TemplateResponse("welcome.html", {'request': request})
 
 
 @chat_router.get('/chat', name='chat')
-async def print_chat(request: Request):
-    return template.TemplateResponse("main.html", {'request': request})
+async def print_chat(request: Request,
+                     user: User = Depends(current_user)):
+    return template.TemplateResponse("main.html", {'request': request, 'username': user.username})
 
 
-@chat_router.get('/get_messages')
-async def get_all_messages(session: AsyncSession = Depends(get_async_session), user: User = Depends(current_user)):
-    await asyncio.sleep(5)
+@chat_router.get('/get-messages')
+async def get_all_messages(session: AsyncSession = Depends(get_async_session)):
+    await asyncio.sleep(1)
     data = await session.execute(select(Message))
     messages = data.scalars().all()
     return messages
@@ -48,3 +49,12 @@ async def search_messages(text: str, session: AsyncSession = Depends(get_async_s
     result = await session.execute(select(Message).where(Message.text == text))
     messages = result.scalars().all()
     return messages
+
+
+@chat_router.get('/create-message-example')
+async def create_message_example(session: AsyncSession = Depends(get_async_session)):
+    user = await session.get(User, 2)
+    message = Message(user=user, username=user.username, text='Hiii')
+    session.add(message)
+    await session.commit()
+    return message
