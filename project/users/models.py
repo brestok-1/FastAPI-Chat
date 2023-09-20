@@ -10,3 +10,4 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     username = Column(String(128), nullable=False, unique=True)
     id = Column(Integer, primary_key=True, autoincrement=True)
     messages = relationship("Message", back_populates="user")
+    first_message_id = Column(Integer, nullable=True)
