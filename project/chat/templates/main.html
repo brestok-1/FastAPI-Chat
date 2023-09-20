@@ -70,19 +70,25 @@
         })
         .then(data => {
             const parentElement = document.getElementById("parentElement");
-            const ulElement = document.createElement("ul");
-            ulElement.className = "list-unstyled mt-0";
-            data.forEach(message => {
-                if (message.username !== "{{username}}") {
-                    const li = document.createElement("li");
-                    li.className = "d-flex justify-content-between col-7 my-2 float-start";
-                    const date = new Date(message.created_at);
-                    const formattedDate = `${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+            if (data.length !== 0) {
+                const ulElement = document.createElement("ul");
+                ulElement.className = "list-unstyled mt-0";
+                ulElement.id = 'ulElement'
+                data.forEach(message => {
+                    if (message.username !== "{{username}}") {
+                        const li = document.createElement("li");
+                        li.className = "d-flex justify-content-between col-7 my-2 float-start";
+                        const date = new Date(message.created_at).toLocaleString('en-US', {
+                            day: 'numeric',
+                            month: 'short',
+                            hour: 'numeric',
+                            minute: 'numeric'
+                        });
 
-                    li.innerHTML = `<div class="card col-12">
+                        li.innerHTML = `<div class="card col-12">
                     <div class="card-header bg-primary d-flex justify-content-between">
                         <p class="fs-5 mb-0 text-white">${message.username}</p>
-                        <p class="text-muted small mb-0"><span class="text-white"><i class="far fa-clock"></i><span class="ms-1">${formattedDate}</span></span></p>
+                        <p class="text-muted small mb-0"><span class="text-white"><i class="far fa-clock"></i><span class="ms-1">${date}</span></span></p>
                     </div>
                     <div class="card-body bg-primary">
                         <p class="mb-0 text-white pb-1">
@@ -90,18 +96,22 @@
                         </p>
                     </div>
                 </div>`;
-                    ulElement.appendChild(li);
-                } else {
+                        ulElement.appendChild(li);
+                    } else {
 
-                    const li = document.createElement("li");
-                    li.className = "d-flex justify-content-between col-7 my-2 float-end";
-                    const date = new Date(message.created_at);
-                    const formattedDate = `${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+                        const li = document.createElement("li");
+                        li.className = "d-flex justify-content-between col-7 my-2 float-end";
+                        const date = new Date(message.created_at).toLocaleString('en-US', {
+                            day: 'numeric',
+                            month: 'short',
+                            hour: 'numeric',
+                            minute: 'numeric'
+                        });
 
-                    li.innerHTML = `<div class="card col-12">
+                        li.innerHTML = `<div class="card col-12">
                     <div class="card-header bg-success d-flex justify-content-between me-3">
                         <p class="fs-5 mb-0 text-white">${message.username}</p>
-                        <p class="text-muted small mb-0"><span class="text-white"><i class="far fa-clock"></i><span class="ms-1">${formattedDate}</span></span></p>
+                        <p class="text-muted small mb-0"><span class="text-white"><i class="far fa-clock"></i><span class="ms-1">${date}</span></span></p>
                     </div>
                     <div class="card-body bg-success me-3">
                         <p class="mb-0 text-white pb-1">
@@ -109,53 +119,103 @@
                         </p>
                     </div>
                 </div>`;
-                    ulElement.appendChild(li);
-                }
-            });
-            const loadingElement = document.getElementById("loading");
-            parentElement.removeChild(loadingElement);
-            parentElement.appendChild(ulElement);
-            parentElement.scrollTop = parentElement.scrollHeight
+                        ulElement.appendChild(li);
+                    }
+                });
+                const loadingElement = document.getElementById("loading");
+                parentElement.removeChild(loadingElement);
+                parentElement.appendChild(ulElement);
+                parentElement.scrollTop = parentElement.scrollHeight
+            } else {
+                parentElement.innerHTML = `<div class="d-flex justify-content-center fs-3 align-items-center times-new-roman" id="nomessage">There are no messages in LiveChat... Be the first!</div>`
+            }
         })
         .catch(error => {
             console.error('Error:', error);
         });
 </script>
 <script>
+
+    const client_id = Date.now()
+    const ws_url = `/ws/ws/${client_id}`
+    const socket = new WebSocket("ws://" + window.location.host + ws_url);
+
     const form = document.getElementById('send-message');
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
         const input = document.getElementById('input-message');
         const text = input.value;
-        const data = {text: text};
-        try {
-            const response = await fetch('/create-message', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (response.ok) {
-                console.log('Сообщение успешно отправлено');
-
-            } else if (response.status === 401) {
-                window.location.href = 'http://' + window.location.host + '/auth/jwt/login';
-                console.error('Ошибка при отправке сообщения')
-                event.preventDefault();
-            } else {
-                alert('Something was wrong...')
-                console.log(response)
-                event.preventDefault()
-            }
-        } catch (error) {
-            console.error('Ошибка при отправке запроса:', error);
-        }
-
+        socket.send(JSON.stringify({
+            text: text,
+            username: "{{username}}",
+            created_at: new Date().toLocaleString('en-US', {
+                day: 'numeric',
+                month: 'short',
+                hour: 'numeric',
+                minute: 'numeric'
+            })
+        }))
         input.value = '';
     });
 
+    socket.onmessage = function (event) {
+        const message = JSON.parse(event.data)
+        const noMessage = document.getElementById('nomessage')
+        if (noMessage) {
+            noMessage.remove()
+        }
+        let ulElement = document.getElementById('ulElement')
+        console.log(ulElement)
+        const parentElement = document.getElementById('parentElement')
+        if (!ulElement) {
+            ulElement = document.createElement('ul')
+            ulElement.className = "list-unstyled mt-0";
+            ulElement.id = 'ulElement'
+            parentElement.appendChild(ulElement)
+        }
+
+        if (message.username !== "{{username}}") {
+
+            const li = document.createElement("li");
+            li.className = "d-flex justify-content-between col-7 my-2 float-start";
+
+            li.innerHTML = `<div class="card col-12">
+                    <div class="card-header bg-primary d-flex justify-content-between">
+                        <p class="fs-5 mb-0 text-white">${message.username}</p>
+                        <p class="text-muted small mb-0"><span class="text-white"><i class="far fa-clock"></i><span class="ms-1">${message.created_at}</span></span></p>
+                    </div>
+                    <div class="card-body bg-primary">
+                        <p class="mb-0 text-white pb-1">
+                            ${message.text}
+                        </p>
+                    </div>
+                </div>`;
+
+            console.log('ul elem', ulElement)
+            ulElement.appendChild(li);
+            parentElement.scrollTop = parentElement.scrollHeight
+
+        } else {
+
+            const li = document.createElement("li");
+            li.className = "d-flex justify-content-between col-7 my-2 float-end";
+
+            li.innerHTML = `<div class="card col-12">
+                    <div class="card-header bg-success d-flex justify-content-between me-3">
+                        <p class="fs-5 mb-0 text-white">${message.username}</p>
+                        <p class="text-muted small mb-0"><span class="text-white"><i class="far fa-clock"></i><span class="ms-1">${message.created_at}</span></span></p>
+                    </div>
+                    <div class="card-body bg-success me-3">
+                        <p class="mb-0 text-white pb-1">
+                            ${message.text}
+                        </p>
+                    </div>
+                </div>`;
+            console.log('ul elem', ulElement)
+            ulElement.appendChild(li);
+            parentElement.scrollTop = parentElement.scrollHeight
+        }
+    }
 </script>
 <script>
     const myForm = document.getElementById('search');
@@ -196,6 +256,7 @@
                             loadingElement.remove()
                             const ulElement = document.createElement("ul");
                             ulElement.className = "list-unstyled mt-0";
+                            ulElement.id = 'ulElement'
                             messages.forEach(message => {
                                 if (message.username !== "{{username}}") {
                                     const li = document.createElement("li");

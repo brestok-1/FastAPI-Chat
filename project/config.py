@@ -13,7 +13,7 @@ class BaseConfig:
                     f'{os.getenv("POSTGRES_DB")}')
     DATABASE_CONNECT_DICT: dict = {}
 
-    # WS_MESSAGE_QUEUE = os.getenv('WS_MESSAGE_QUEUE')
+    WS_MESSAGE_QUEUE = os.getenv('WS_MESSAGE_QUEUE')
 
 
 class DevelopmentConfig(BaseConfig):

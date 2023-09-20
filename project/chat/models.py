@@ -13,3 +13,10 @@ class Message(Base):
     username = Column(String(128), ForeignKey("users.username"))
     text = Column(String(4096), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    def as_dict(self):
+        return {
+            'username': self.username,
+            'text': self.text,
+            'created_at': self.created_at,
+        }

@@ -1,3 +1,4 @@
+from broadcaster import Broadcast
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
@@ -15,6 +16,9 @@ def create_app() -> FastAPI:
 
     from project.users import user_router
     app.include_router(user_router, tags=['Users'])
+
+    from project.ws import ws_router
+    app.include_router(ws_router, tags=['Ws'])
 
     app.include_router(
         fastapi_users.get_auth_router(auth_backend),
