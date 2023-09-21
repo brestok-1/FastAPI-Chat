@@ -13,3 +13,5 @@ async def websocket_endpoint(websocket: WebSocket):
             await manager.broadcast(data['text'], data['username'], data['created_at'])
     except WebSocketDisconnect:
         manager.disconnect(websocket)
+
+
