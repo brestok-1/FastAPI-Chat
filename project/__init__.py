@@ -1,9 +1,11 @@
-from broadcaster import Broadcast
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
+from sqladmin import Admin
+
+from project.admin import UserAdmin
 from project.config import settings
-from project.database import get_async_session, async_session_maker
+from project.database import get_async_session, async_session_maker, engine
 from project.users.auth import auth_backend, fastapi_users
 from project.users.schemas import UserRead, UserCreate
 
@@ -33,5 +35,8 @@ def create_app() -> FastAPI:
     )
 
     app.mount('/static', StaticFiles(directory="static"), name="static")
+
+    admin = Admin(app, engine)
+    admin.add_view(UserAdmin)
 
     return app
